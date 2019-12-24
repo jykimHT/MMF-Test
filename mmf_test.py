@@ -6,8 +6,8 @@ import traceback
 
 def recv_data(sock):
     try:
-        length = int.from_bytes(sock.recv(4), byteorder='big')
-        print("length : %d" % length)
+        len_data = sock.recv(4)
+        length = int.from_bytes(len_data, byteorder='big')
 
         if length == 0:
             return 'No Data'
@@ -17,9 +17,17 @@ def recv_data(sock):
         response += data
 
         header = response[0:24]
-        print_header(header)
         body = "{0}".format(response.decode('utf-8')[24:])
+
+        len_byte_array = bytearray(len_data)
+        response_byte_array = bytearray(response)
+        raw_data = len_byte_array + response_byte_array
+
+        print(raw_data)
+        print("length : %d" % length)
+        print_header(header)
         print("body : " + body)
+
     except socket.timeout as e:
         print(traceback.format_exc())
         sock.close()
